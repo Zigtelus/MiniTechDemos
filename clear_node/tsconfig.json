@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,          // разрешение использовать декораторы
+    "experimentalDecorators": true,         // разрешает использовать эксперементальный синтаксис декораторов
+    "module": "commonjs",                   // какой тип импорта и експорта использовать
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "strict": true,                          // строгий режим
+    "baseUrl": "./",                         // корень папок
+    "paths": {                               // пропписываем алиасы
+      "@decorators/*": ["src/decorators/*"], // путь до папки
+      "@decorators": ["src/decorators"]      // путь до папки
+    }
+  },
+  "lib": ["es2015"],
+  "include": [
+    "src/**/*.ts",                          // формат файлов пример name_file.ts
+    "src/**/*.*.ts"                         // формат файлов пример name_file.type.ts
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+}
