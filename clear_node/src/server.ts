@@ -1,13 +1,11 @@
 import { ServerResponse } from "http";
-import { Users, Books } from "./share";
+import { UsersController, BooksController } from "./share";
 import { DefaultResponse } from "@decorators";
 
 const { createServer } = require('http');
 const mysql = require('mysql');
 
 abstract class AServer {
-
-
   /**
    * @description метод для запуска сервера
    */
@@ -28,26 +26,36 @@ export class Server implements AServer {
 
   constructor() {
 		this.start();
-    this.handleRequest = this.handleRequest.bind(this);
   };
 
   start() {
-    const server = createServer(this.handleRequest);
+    const server = createServer(this.handleRequest.bind(this));
+
     server.listen(this.port, () => {
       console.log(`Server running at http://${this.hostname}:${this.port}/`);
     });
   };
 
-  @DefaultResponse()
-  handleRequest(req: Request, res: ServerResponse) {
+  handleRequest(req: any, res: ServerResponse) {
 
+    req.on('data', (chunk: any) => {
+      req.body = chunk;
+    });
+
+    req.on('end', ()=> {
+      this.routeRequest(req, res);
+    });
+  };
+
+  @DefaultResponse()
+  routeRequest(req: any, res: ServerResponse) {
     const rootPoint = req.url.split('/')[1];
     
     switch (rootPoint) {
 			case 'books':
-				return new Books(req, res);
+				return new BooksController(req, res);
 			case 'users':
-				return new Users(req, res);
+				return new UsersController(req, res);
     };
   };
 }

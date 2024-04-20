@@ -5,16 +5,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Users = void 0;
+const http_1 = require("http");
 const abstracts_1 = require("../../types/abstracts");
 const _decorators_1 = require("@decorators");
+;
 let Users = class Users extends abstracts_1.AUsers {
-    // constructor(req: Request, res: ServerResponse) {
-    // 	this.start(req, res);
-    // };
-    // @DistributionRes()
-    start() { }
+    constructor(req, res) {
+        super(req, res);
+    }
     ;
     getUser() {
         return {
@@ -50,7 +53,8 @@ let Users = class Users extends abstracts_1.AUsers {
 };
 exports.Users = Users;
 exports.Users = Users = __decorate([
-    (0, _decorators_1.Controller)()
+    (0, _decorators_1.Controller)(),
+    __metadata("design:paramtypes", [Request, http_1.ServerResponse])
 ], Users);
 ;
 //# sourceMappingURL=users.js.map

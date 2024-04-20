@@ -11,7 +11,7 @@
 
 import { ABase } from "./base.abstract";
 
-abstract class ABooks extends ABase {
+abstract class ABooks<T, U> extends ABase<T>  {
 	// constructor(req: Request, res: Response) {
 	// 	this.start(req, res);
 	// };
@@ -19,6 +19,8 @@ abstract class ABooks extends ABase {
 	// start(req: Request, res: Response): void {
 
 	// };
+
+	abstract getBooks(req: any, res: any): U;
 };
 
 export { ABooks };

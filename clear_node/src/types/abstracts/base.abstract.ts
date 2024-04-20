@@ -11,7 +11,7 @@
 
 import { ServerResponse } from "http";
 
-abstract class ABase {
+abstract class ABase <TAnswer>  {
 	constructor(req: Request, res: ServerResponse) {
 		this.start(req, res);
 	};
@@ -23,9 +23,8 @@ abstract class ABase {
 
 	/**
 	 * @description  дефолтный метод, который вызвается в случае, если не был найден метод класса для ответа
-	 * @param res    отдаваемые данные
 	 */
-	protected abstract answer(res: ServerResponse): void;
+	protected abstract answer(): TAnswer;
 };
 
 export { ABase };

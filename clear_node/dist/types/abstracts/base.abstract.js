@@ -16,6 +16,11 @@ class ABase {
         this.start(req, res);
     }
     ;
+    /**
+     * @description  метод приводящий в действие весь класс
+     */
+    start(req, res) { }
+    ;
 }
 exports.ABase = ABase;
 ;

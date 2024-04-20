@@ -9,12 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Books = void 0;
+exports.BooksController = void 0;
 const http_1 = require("http");
 const abstracts_1 = require("../../types/abstracts");
 const _decorators_1 = require("@decorators");
 ;
-let Books = class Books extends abstracts_1.ABooks {
+let BooksController = class BooksController extends abstracts_1.ABooks {
     constructor(req, res) {
         super(req, res);
     }
@@ -36,10 +36,10 @@ let Books = class Books extends abstracts_1.ABooks {
     }
     ;
 };
-exports.Books = Books;
-exports.Books = Books = __decorate([
+exports.BooksController = BooksController;
+exports.BooksController = BooksController = __decorate([
     (0, _decorators_1.Controller)(),
     __metadata("design:paramtypes", [Request, http_1.ServerResponse])
-], Books);
+], BooksController);
 ;
-//# sourceMappingURL=books.js.map
+//# sourceMappingURL=books.controller.js.map

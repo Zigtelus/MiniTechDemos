@@ -9,21 +9,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Books = void 0;
+exports.UsersController = void 0;
 const http_1 = require("http");
 const abstracts_1 = require("../../types/abstracts");
 const _decorators_1 = require("@decorators");
+const user_service_1 = require("./user.service");
 ;
-let Books = class Books extends abstracts_1.ABooks {
+let UsersController = class UsersController extends abstracts_1.AUsers {
     constructor(req, res) {
         super(req, res);
+        this.userService = new user_service_1.UserService();
+        this.postUser(req, res);
     }
     ;
-    getBooks() {
+    getUser() {
+        return this.userService.getUser();
+        // return {
+        // 	statusCode: 200,
+        // 	setHeader: [
+        // 		['Content-Type', 'text/plain']
+        // 	],
+        // 	end: {
+        // 	  statusCode: 200,
+        // 	  setHeader: [
+        // 		  ['Content-Type', 'text/plain']
+        // 	  ],
+        // 	}
+        // };
+    }
+    ;
+    postUser(req, res) {
+        console.log('#####');
+        // console.log(req)
+        console.log('#####');
+        // return this.userService.postUser(req.body)
         return {
             statusCode: 200,
             setHeader: ['Content-Type', 'text/plain'],
-            end: 'getBooks'
+            end: 'put User'
         };
     }
     ;
@@ -31,15 +54,16 @@ let Books = class Books extends abstracts_1.ABooks {
         return {
             statusCode: 200,
             setHeader: ['Content-Type', 'text/plain'],
-            end: 'this books'
+            end: 'this users'
         };
     }
     ;
 };
-exports.Books = Books;
-exports.Books = Books = __decorate([
+exports.UsersController = UsersController;
+exports.UsersController = UsersController = __decorate([
     (0, _decorators_1.Controller)(),
-    __metadata("design:paramtypes", [Request, http_1.ServerResponse])
-], Books);
+    __metadata("design:paramtypes", [Request,
+        http_1.ServerResponse])
+], UsersController);
 ;
-//# sourceMappingURL=books.js.map
+//# sourceMappingURL=users.controller.js.map

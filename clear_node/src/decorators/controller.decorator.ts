@@ -37,6 +37,44 @@ class BaseController implements ABaseController {
 					const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
 					const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
 					
+					console.log('###', findedMethod);
+
+					if (findedMethod) {
+					  if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
+							console.warn("Метод класса и метод запроса не совпадают");
+					  };
+						self.prepareResponse(res, (this as any)[findedMethod](req, res));
+					} else {
+						console.warn("по данному запросу не было найдено метода");
+						self.prepareResponse(res, (this as any).answer());
+					};
+				};
+      };
+		};
+  };
+
+	
+	DistributionRes =()=> {
+		const self = this;
+
+		return (target: any, key: string, descriptor: PropertyDescriptor)=> {
+
+			descriptor.value = function(...args: any[]) {
+
+				const req: Request = args[0];
+				const res: ServerResponse = args[1];
+
+				console.log('########')
+				console.log(req.body)
+				console.log('########')
+			  const rootPoint: string = req.url.split('/')[2];
+
+				if (rootPoint === undefined) {
+					self.prepareResponse(res, (this as any).answer());
+				} else {
+					const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+					const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
+					
 
 					if (findedMethod) {
 					  if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
@@ -48,72 +86,33 @@ class BaseController implements ABaseController {
 						self.prepareResponse(res, (this as any).answer());
 					};
 				};
-      }
-		}
-  };
+			};
 
-	
-	// DistributionRes =()=> {
-	// 	const self = this;
-
-	// 	return (target: any, key: string, descriptor: PropertyDescriptor)=> {
-
-	// 		descriptor.value = function(...args: any[]) {
-
-	// 			const req: Request = args[0];
-	// 			const res: ServerResponse = args[1];
-
-	// 		  const rootPoint: string = req.url.split('/')[2];
-
-	// 			if (rootPoint === undefined) {
-	// 				self.prepareResponse(res, (this as any).answer());
-	// 			} else {
-	// 				const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-	// 				const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
-					
-
-	// 				if (findedMethod) {
-	// 				  if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
-	// 						console.warn("Метод класса и метод запроса не совпадают");
-	// 				  };
-	// 					self.prepareResponse(res, (this as any)[findedMethod]());
-	// 				} else {
-	// 					console.warn("по данному запросу не было найдено метода");
-	// 					self.prepareResponse(res, (this as any).answer());
-	// 				};
-	// 			};
-	// 		};
-
-	// 		return descriptor;
-	// 	};
-	// };
+			return descriptor;
+		};
+	};
 
 
 	/**
 	 * @description res ответ по полученным данным в param1
 	 * @param {ServerResponse} res Объект ответа сервера. 
-	 * @param {{statusCode, setHeader, end}: {statusCode: number, setHeader: [string, string][], end: unknown}} полученные данные от вызываемого метода класса 
+	 * @param {{statusCode, setHeader, end}: {statusCode: number, setHeader: [string, string], end: unknown}} полученные данные от вызываемого метода класса 
 	 */
 	private prepareResponse(
 		res: ServerResponse, 
-		{statusCode, setHeader, end}: {statusCode: number, setHeader: [string, string][], end: unknown}
+		{statusCode, setHeader, end}: {statusCode: number, setHeader: [string, string] , end: unknown}
 	) {
-		if (setHeader.length > 0) {
-			const deletedEl = setHeader.shift();
-
-			if (deletedEl !== undefined) {
-				res.setHeader(deletedEl[0], deletedEl[1]);
-			}
-		};
-
+		
+		res.setHeader(setHeader[0], setHeader[1]);
+		res.statusCode = statusCode;
+		
 		if (typeof end === "string") {
 			res.end(end);
 		} else {
 			res.end(JSON.stringify(end));
 		};
 
-		res.statusCode = statusCode;
-	}
+	};
 
 	/**
 	 * @description сравнение метода запроса и метода класса
@@ -138,11 +137,11 @@ class BaseController implements ABaseController {
 
 		if (getNameReqMethod !== reqMethod.toLowerCase()) {
 		  console.error("метод запроса и метод класса не совпадает");
-			return false
+			return false;
 		} else {
-			return true
+			return true;
 		}
 	};
 };
 
-export const { Controller } = new BaseController();
+export const { Controller, DistributionRes } = new BaseController();

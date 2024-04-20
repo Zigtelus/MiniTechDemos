@@ -11,7 +11,8 @@
 
 import { ABase } from "./base.abstract";
 
-abstract class AUsers extends ABase {
+
+abstract class AUsers <T> extends ABase <T>{
 	// constructor(req: Request, res: Response) {
 	// 	this.start(req, res);
 	// };

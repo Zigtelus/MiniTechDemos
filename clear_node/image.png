@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+const data = [
+  {
+    id: 1,
+    parentId: 0,
+    name: 'Электроника',
+  },
+  {
+    id: 7,
+    parentId: 2,
+    name: 'Смартфоны',
+  },
+  {
+    id: 2,
+    parentId: 1,
+    name: 'Мобильные телефоны',
+  },
+  {
+    id: 3,
+    parentId: 1,
+    name: 'Компьютеры и ноутбуки',
+  },
+  {
+    id: 5,
+    parentId: 3,
+    name: 'Ноутбуки',
+  },
+  {
+    id: 4,
+    parentId: 3,
+    name: 'Системные блоки',
+  },
+  {
+    id: 9,
+    parentId: 5,
+    name: 'Dell',
+  },
+  {
+    id: 8,
+    parentId: 5,
+    name: 'HP',
+  },
+  {
+    id: 10,
+    parentId: 5,
+    name: 'Lenovo',
+  },
+  {
+    id: 6,
+    parentId: 3,
+    name: 'Комплектующие',
+  },
+]; 
+
+function getTree(arr) {
+
+  const objectData = arr.reduce((acum, item, index)=> {
+    acum[`${item.id}`] = item;
+    return acum;
+  }, {});
+
+  for (let keyItem in objectData) {
+
+    const item = objectData[keyItem];
+    const parentId = objectData[keyItem].parentId;
+
+    if (objectData[parentId] !== undefined) {
+      let children = objectData[parentId]?.children;
+      if (children === undefined) {
+        objectData[parentId].children = {};
+      };
+
+      objectData[parentId].children[`${item.id}`] = item;
+    }
+  };
+
+	const root = objectData['1'];
+
+	for (let item in objectData) {
+		delete objectData[item].id;
+		delete objectData[item].parentId;
+	}
+
+  return {"1": root};
+}
+
+console.log(getTree(data));
+
+</script>
+</body>
+</html>

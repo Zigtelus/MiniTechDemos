@@ -9,18 +9,19 @@
     5) protected       - метод доступен в подклассах
     6) private         - метод не доступен в подкласса (не наследуется)
 */
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DistributionRes = exports.Controller = void 0;
+exports.Controller = void 0;
 class ABaseController {
 }
 ;
 class BaseController {
     constructor() {
+        /**
+         * @description декоратор класса, для определения запроса
+         */
         this.Controller = () => {
             const self = this;
             return (constructor) => {
-                const originalMethod = constructor.prototype.start;
                 constructor.prototype.start = function (...args) {
                     const req = args[0];
                     const res = args[1];
@@ -46,60 +47,43 @@ class BaseController {
                     }
                     ;
                 };
-                // console.log('dd', constructor.prototype.start());
-                // console.log(new constructor());
-                // console.log('dd', constructor.prototype.dd());
-                // constructor.prototype.request = req;
-                // constructor.prototype.response = res;
-                // console.log(`${this}: Class decorator called.`);
-                // console.log(`${constructor}: Class decorator called.`);
-            };
-        };
-        this.DistributionRes = () => {
-            const self = this;
-            return (target, key, descriptor) => {
-                descriptor.value = function (...args) {
-                    const req = args[0];
-                    const res = args[1];
-                    const rootPoint = req.url.split('/')[2];
-                    if (rootPoint === undefined) {
-                        self.prepareResponse(res, this.answer());
-                    }
-                    else {
-                        const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-                        const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
-                        if (findedMethod) {
-                            if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
-                                console.warn("Метод класса и метод запроса не совпадают");
-                            }
-                            ;
-                            self.prepareResponse(res, this[findedMethod]());
-                        }
-                        else {
-                            console.warn("по данному запросу не было найдено метода");
-                            self.prepareResponse(res, this.answer());
-                        }
-                        ;
-                    }
-                    ;
-                };
-                return descriptor;
             };
         };
     }
+    // DistributionRes =()=> {
+    // 	const self = this;
+    // 	return (target: any, key: string, descriptor: PropertyDescriptor)=> {
+    // 		descriptor.value = function(...args: any[]) {
+    // 			const req: Request = args[0];
+    // 			const res: ServerResponse = args[1];
+    // 		  const rootPoint: string = req.url.split('/')[2];
+    // 			if (rootPoint === undefined) {
+    // 				self.prepareResponse(res, (this as any).answer());
+    // 			} else {
+    // 				const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+    // 				const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
+    // 				if (findedMethod) {
+    // 				  if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
+    // 						console.warn("Метод класса и метод запроса не совпадают");
+    // 				  };
+    // 					self.prepareResponse(res, (this as any)[findedMethod]());
+    // 				} else {
+    // 					console.warn("по данному запросу не было найдено метода");
+    // 					self.prepareResponse(res, (this as any).answer());
+    // 				};
+    // 			};
+    // 		};
+    // 		return descriptor;
+    // 	};
+    // };
     /**
      * @description res ответ по полученным данным в param1
      * @param {ServerResponse} res Объект ответа сервера.
-     * @param {{statusCode, setHeader, end}: {statusCode: number, setHeader: [string, string][], end: unknown}} полученные данные от вызываемого метода класса
+     * @param {{statusCode, setHeader, end}: {statusCode: number, setHeader: [string, string], end: unknown}} полученные данные от вызываемого метода класса
      */
     prepareResponse(res, { statusCode, setHeader, end }) {
-        if (setHeader.length > 0) {
-            const deletedEl = setHeader.shift();
-            if (deletedEl !== undefined) {
-                res.setHeader(deletedEl[0], deletedEl[1]);
-            }
-        }
-        ;
+        res.setHeader(setHeader[0], setHeader[1]);
+        res.statusCode = statusCode;
         if (typeof end === "string") {
             res.end(end);
         }
@@ -107,8 +91,8 @@ class BaseController {
             res.end(JSON.stringify(end));
         }
         ;
-        res.statusCode = statusCode;
     }
+    ;
     /**
      * @description сравнение метода запроса и метода класса
      * @example getReqMethodFromMethodClass('getUsers', 'GET') === true
@@ -136,5 +120,5 @@ class BaseController {
     ;
 }
 ;
-_a = new BaseController(), exports.Controller = _a.Controller, exports.DistributionRes = _a.DistributionRes;
+exports.Controller = new BaseController().Controller;
 //# sourceMappingURL=controller.decorator.js.map

@@ -28,18 +28,26 @@ class Server {
     ;
     start() {
         const server = createServer(this.handleRequest);
+        // request - это специальное событие в Node.js, которое генерируется при каждом входящем HTTP-запросе к серверу
+        server.on('request', this.handleRequest);
         server.listen(this.port, () => {
             console.log(`Server running at http://${this.hostname}:${this.port}/`);
         });
     }
     ;
     handleRequest(req, res) {
+        // console.log(req.body)
+        // let body;
+        req.on('data', (chunk) => {
+            // body += chunk;
+            console.log(chunk);
+        });
         const rootPoint = req.url.split('/')[1];
         switch (rootPoint) {
             case 'books':
-                return new share_1.Books(req, res);
+                return new share_1.BooksController(req, res);
             case 'users':
-                return new share_1.Users(req, res);
+                return new share_1.UsersController(req, res);
         }
         ;
     }
