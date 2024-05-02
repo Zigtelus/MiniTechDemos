@@ -32,8 +32,10 @@ class BaseController implements ABaseController {
 			  const rootPoint: string = req.url.split('/')[2];
 
 				if (rootPoint === undefined) {
+				  // дефолтный ответ, на случай если не указан никакой метод
 					self.prepareResponse(res, (this as any).answer());
 				} else {
+
 					const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
 					const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
 					
@@ -42,8 +44,10 @@ class BaseController implements ABaseController {
 					if (findedMethod) {
 					  if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
 							console.warn("Метод класса и метод запроса не совпадают");
-					  };
-						self.prepareResponse(res, (this as any)[findedMethod](req, res));
+					  } else {
+							// метод класса найден
+							self.prepareResponse(res, (this as any)[findedMethod](req, res));
+						}
 					} else {
 						console.warn("по данному запросу не было найдено метода");
 						self.prepareResponse(res, (this as any).answer());
@@ -52,7 +56,6 @@ class BaseController implements ABaseController {
       };
 		};
   };
-
 	
 	DistributionRes =()=> {
 		const self = this;

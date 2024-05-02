@@ -9,8 +9,9 @@
     5) protected       - метод доступен в подклассах
     6) private         - метод не доступен в подкласса (не наследуется)
 */
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Controller = void 0;
+exports.DistributionRes = exports.Controller = void 0;
 class ABaseController {
 }
 ;
@@ -25,6 +26,40 @@ class BaseController {
                 constructor.prototype.start = function (...args) {
                     const req = args[0];
                     const res = args[1];
+                    const rootPoint = req.url.split('/')[2];
+                    if (rootPoint === undefined) {
+                        self.prepareResponse(res, this.answer());
+                    }
+                    else {
+                        const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+                        const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
+                        console.log('###', findedMethod);
+                        if (findedMethod) {
+                            if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
+                                console.warn("Метод класса и метод запроса не совпадают");
+                            }
+                            ;
+                            self.prepareResponse(res, this[findedMethod](req, res));
+                        }
+                        else {
+                            console.warn("по данному запросу не было найдено метода");
+                            self.prepareResponse(res, this.answer());
+                        }
+                        ;
+                    }
+                    ;
+                };
+            };
+        };
+        this.DistributionRes = () => {
+            const self = this;
+            return (target, key, descriptor) => {
+                descriptor.value = function (...args) {
+                    const req = args[0];
+                    const res = args[1];
+                    console.log('########');
+                    console.log(req.body);
+                    console.log('########');
                     const rootPoint = req.url.split('/')[2];
                     if (rootPoint === undefined) {
                         self.prepareResponse(res, this.answer());
@@ -47,35 +82,10 @@ class BaseController {
                     }
                     ;
                 };
+                return descriptor;
             };
         };
     }
-    // DistributionRes =()=> {
-    // 	const self = this;
-    // 	return (target: any, key: string, descriptor: PropertyDescriptor)=> {
-    // 		descriptor.value = function(...args: any[]) {
-    // 			const req: Request = args[0];
-    // 			const res: ServerResponse = args[1];
-    // 		  const rootPoint: string = req.url.split('/')[2];
-    // 			if (rootPoint === undefined) {
-    // 				self.prepareResponse(res, (this as any).answer());
-    // 			} else {
-    // 				const methodsOfClass = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-    // 				const findedMethod = methodsOfClass.find(nameMethod => nameMethod.toLowerCase() === rootPoint.toLowerCase());
-    // 				if (findedMethod) {
-    // 				  if (!self.getReqMethodFromMethodClass(findedMethod, req.method)) {
-    // 						console.warn("Метод класса и метод запроса не совпадают");
-    // 				  };
-    // 					self.prepareResponse(res, (this as any)[findedMethod]());
-    // 				} else {
-    // 					console.warn("по данному запросу не было найдено метода");
-    // 					self.prepareResponse(res, (this as any).answer());
-    // 				};
-    // 			};
-    // 		};
-    // 		return descriptor;
-    // 	};
-    // };
     /**
      * @description res ответ по полученным данным в param1
      * @param {ServerResponse} res Объект ответа сервера.
@@ -120,5 +130,5 @@ class BaseController {
     ;
 }
 ;
-exports.Controller = new BaseController().Controller;
+_a = new BaseController(), exports.Controller = _a.Controller, exports.DistributionRes = _a.DistributionRes;
 //# sourceMappingURL=controller.decorator.js.map

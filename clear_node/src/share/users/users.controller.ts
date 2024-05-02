@@ -9,7 +9,7 @@ interface IAnswer {
 	end: string;
 };
 
-// @Controller()
+@Controller()
 export class UsersController extends AUsers <IAnswer> {
 	private userService: UserService = new UserService();
 
@@ -34,16 +34,11 @@ export class UsersController extends AUsers <IAnswer> {
 		// 	  setHeader: [
 		// 		  ['Content-Type', 'text/plain']
 		// 	  ],
-		// 	}
+		// 	};
 		// };
 	};
 
 	private postUser(req: Request, res: ServerResponse) {
-
-		console.log('#####')
-		// console.log(req)
-		console.log('#####')
-		// return this.userService.postUser(req.body)
 		return {
 			statusCode: 200,
 			setHeader: ['Content-Type', 'text/plain'],

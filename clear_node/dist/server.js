@@ -23,25 +23,35 @@ class Server {
         this.hostname = '127.0.0.1';
         this.port = 3000;
         this.start();
-        this.handleRequest = this.handleRequest.bind(this);
     }
     ;
     start() {
-        const server = createServer(this.handleRequest);
-        // request - это специальное событие в Node.js, которое генерируется при каждом входящем HTTP-запросе к серверу
-        server.on('request', this.handleRequest);
+        const server = createServer(this.handleRequest.bind(this));
         server.listen(this.port, () => {
             console.log(`Server running at http://${this.hostname}:${this.port}/`);
         });
     }
     ;
     handleRequest(req, res) {
-        // console.log(req.body)
-        // let body;
+        // отключаем CORS
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        let body = Buffer.alloc(0);
         req.on('data', (chunk) => {
-            // body += chunk;
-            console.log(chunk);
+            console.log('start');
+            body = Buffer.concat([body, chunk]);
         });
+        req.on('end', () => {
+            console.log(' end');
+            req.body = body;
+            this.routeRequest(req, res);
+        });
+        req.on("error", function (e) {
+            console.error(e);
+        });
+    }
+    ;
+    routeRequest(req, res) {
         const rootPoint = req.url.split('/')[1];
         switch (rootPoint) {
             case 'books':
@@ -57,7 +67,7 @@ exports.Server = Server;
 __decorate([
     (0, _decorators_1.DefaultResponse)(),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Request, http_1.ServerResponse]),
+    __metadata("design:paramtypes", [Object, http_1.ServerResponse]),
     __metadata("design:returntype", void 0)
-], Server.prototype, "handleRequest", null);
+], Server.prototype, "routeRequest", null);
 //# sourceMappingURL=server.js.map

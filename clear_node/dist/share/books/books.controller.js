@@ -13,6 +13,7 @@ exports.BooksController = void 0;
 const http_1 = require("http");
 const abstracts_1 = require("../../types/abstracts");
 const _decorators_1 = require("@decorators");
+const fs = require('fs');
 ;
 let BooksController = class BooksController extends abstracts_1.ABooks {
     constructor(req, res) {
@@ -23,7 +24,58 @@ let BooksController = class BooksController extends abstracts_1.ABooks {
         return {
             statusCode: 200,
             setHeader: ['Content-Type', 'text/plain'],
-            end: 'getBooks'
+            end: 'req.body'
+        };
+    }
+    ;
+    resolveBody(body) {
+        console.log('avi resolveBody');
+        fs.writeFile("./src/share/books/uuyr.zip", body, (err, data) => {
+            if (err) {
+                console.error('Ошибка чтения файла:', err);
+                return;
+            }
+            ;
+            console.log('Изображение успешно сохранено.');
+        });
+        return "3333";
+    }
+    ;
+    resolveBodyMP3(body) {
+        fs.writeFile("./src/share/books/uuyr.mp3", body, (err, data) => {
+            if (err) {
+                console.error('Ошибка чтения файла:', err);
+                return;
+            }
+            ;
+            console.log('Изображение успешно сохранено.');
+        });
+        return "3333";
+    }
+    ;
+    resolveBodyFile(body) {
+        const buf = Buffer.from(body, 'hex');
+        fs.writeFile('image.png', buf, (err, data) => {
+            if (err) {
+                console.error('Ошибка чтения файла:', err);
+                return false;
+            }
+            console.log('Изображение успешно сохранено.');
+        });
+        return true;
+    }
+    resolveBodyJson(body) {
+        const buf = Buffer.from(body, 'hex');
+        const JSONparse = JSON.parse(buf.toString());
+        return buf.toString();
+    }
+    postBooks(req, res) {
+        var _a;
+        console.log('avi postBooks');
+        return {
+            statusCode: 200,
+            setHeader: ['Content-Type', 'text/plain'],
+            end: (_a = this.resolveBody(req.body)) !== null && _a !== void 0 ? _a : 'req.body'
         };
     }
     ;

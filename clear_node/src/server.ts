@@ -23,6 +23,7 @@ export class Server implements AServer {
   
   hostname = '127.0.0.1';
   port = 3000;
+  body: Buffer[] = [];
 
   constructor() {
 		this.start();
@@ -38,17 +39,30 @@ export class Server implements AServer {
 
   handleRequest(req: any, res: ServerResponse) {
 
+    // отключаем CORS
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
     req.on('data', (chunk: any) => {
-      req.body = chunk;
+		  console.log('start')
+      this.body.push(chunk);
     });
 
     req.on('end', ()=> {
+		  console.log('end')
+
+      req.body = Buffer.concat(this.body);
       this.routeRequest(req, res);
+    });
+
+    req.on("error", function(e: any){
+      console.error(e);
     });
   };
 
   @DefaultResponse()
   routeRequest(req: any, res: ServerResponse) {
+    
     const rootPoint = req.url.split('/')[1];
     
     switch (rootPoint) {

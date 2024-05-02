@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	
+
+	<input placeholder="get file" type="file">
+
+	<script>
+
+
+		const input = document.querySelector('input');
+
+		input.onchange = (e)=> {
+
+
+	    const chunkSize = 1024 * 1024 //1mb
+	    const chunks = splitFile(e.target.files[0], chunkSize);
+
+      sendFile("http://127.0.0.1:3000/books/postBooks", chunks);
+		};
+
+
+		// Функция для разбиения файла на части
+function splitFile(file, chunkSize) {
+    const chunks = [];
+    let offset = 0;
+    while (offset < file.size) {
+        const chunk = file.slice(offset, offset + chunkSize);
+        chunks.push(chunk);
+        offset += chunkSize;
+    }
+    return chunks;
+}
+
+function sendFile(url, chunks, i = 0) {
+
+	console.log('chunks.length', chunks.length)
+	// chunks.forEach((chunk, index)=> {
+    // sendChunk(url, chunk, index);
+	// })
+
+	if (i < chunks.length) {
+		sendChunk(url, chunks, i);
+	}
+
+}
+
+// Функция для отправки части файла на сервер
+function sendChunk(url, chunks, index) {
+    const formData = new FormData();
+    formData.append("chunk", chunks[index]);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+
+    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+
+    xhr.send(formData);
+
+		xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            console.log('Чанк успешно отправлен', chunks);
+		    sendFile("http://127.0.0.1:3000/books/postBooks", chunks, ++index);
+        } else {
+          console.error('Ошибка при отправке чанка:', xhr.statusText);
+        }
+    };
+}
+
+	</script>
+</body>
+</html>

@@ -34,15 +34,11 @@ let UsersController = class UsersController extends abstracts_1.AUsers {
         // 	  setHeader: [
         // 		  ['Content-Type', 'text/plain']
         // 	  ],
-        // 	}
+        // 	};
         // };
     }
     ;
     postUser(req, res) {
-        console.log('#####');
-        // console.log(req)
-        console.log('#####');
-        // return this.userService.postUser(req.body)
         return {
             statusCode: 200,
             setHeader: ['Content-Type', 'text/plain'],

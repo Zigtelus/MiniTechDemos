@@ -2,6 +2,7 @@ import { ServerResponse } from "http";
 import { ABooks } from "../../types/abstracts";
 import { Controller, DistributionRes } from "@decorators";
 const fs = require('fs');
+// const sharp = require('sharp');
 
 interface IAnswer {
 	statusCode: number;
@@ -25,62 +26,59 @@ export class BooksController extends ABooks<IAnswer, IAnswer>  {
 	};
 
 	resolveBody(body: any): string {
+		fs.writeFile("./src/share/books/uuyr2.png", body, (err: any, data: any) => {
+			if (err) {
+				console.error('Ошибка чтения файла:', err);
+				return;
+			};
+			console.log('Изображение успешно сохранено.');
+		});
 
+		return "3333";
+	};
+
+	resolveBodyMP3(body: any): string {
+		fs.writeFile("./src/share/books/uuyr.mp3", body, (err: any, data: any) => {
+			if (err) {
+				console.error('Ошибка чтения файла:', err);
+				return;
+			};
+			console.log('Изображение успешно сохранено.');
+		});
+
+		return "3333";
+	};
+
+	resolveBodyFile(body: any): boolean {
 		const buf: any = Buffer.from(body, 'hex');
+		console.log(buf);
+		fs.writeFile('./src/share/books/image.png', buf, (err: any, data: any) => {
+			if (err) {
+				console.error('Ошибка чтения файла:', err);
+				return false;
+			}
+			console.log('Изображение успешно сохранено.');
+		});
 
-		// const JSONparse = JSON.parse(buf.toString());
-		const JSONparse = false;
-		if (!!JSONparse) {
-		  return buf.toString();
-		} else {
-			// console.log(buf);
-
-      const data = 'Пример текста для записи в файл.';
-			fs.writeFile('image.png', buf, (err: any, data: any) => {
-				if (err) {
-					console.error('Ошибка чтения файла:', err);
-					return;
-				}
-				console.log('Изображение успешно сохранено.');
-
-				// // Отображение данных буфера в виде строки
-				// console.log(data.toString('hex'));
-			
-				// // Преобразование буфера в изображение и сохранение его
-				// fs.writeFile('decoded_image.jpg', data, (err: any) => {
-				// 	if (err) {
-				// 		console.error('Ошибка записи файла:', err);
-				// 		return;
-				// 	}
-				// 	console.log('Изображение успешно декодировано и сохранено.');
-				// });
-			});
-
-			return "3333"
-		}
-		
-		console.log(buf.toString())
-		buf.ff = 'ddddd'
-		let newBuf = JSON.parse(buf.toString());
-		newBuf.ff = 'ee';
-		newBuf = JSON.stringify(newBuf);
-
-
-
-		// console.log(JSON.parse(buf.toString()));
-
-		// return 
+		return true;
 	}
 
-	putBooks(req: any, res: any) {
+	resolveBodyJson(body: any) {
+		const buf: any = Buffer.from(body, 'hex');
+		
+		const JSONparse = JSON.parse(buf.toString());
+		return buf.toString();
+	}
 
+	postBooks(req: any, res: any) {
 		return {
 			statusCode: 200,
-			setHeader: ['Content-Type', 'text/plain'],
+			setHeader: ['Content-Type', 'txt/pleain'],
 			end: this.resolveBody(req.body) ?? 'req.body'
 		};
 	};
 
+	// дефолтный овтет, на случай если не было найдено нужного метода
 	answer() {
 		return {
 			statusCode: 200,
